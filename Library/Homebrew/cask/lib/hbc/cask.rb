@@ -1,3 +1,5 @@
+require "hbc/cask_pin"
+
 require "hbc/dsl"
 require "hbc/metadata"
 
@@ -21,6 +23,7 @@ module Hbc
       return unless block_given?
       @dsl.instance_eval(&block)
       @dsl.language_eval
+      @pin = CaskPin.new(self)
     end
 
     DSL::DSL_METHODS.each do |method_name|
@@ -80,6 +83,21 @@ module Hbc
 
       # collect all installed versions that are different than tap version and return them
       installed.reject { |v| v == version }
+    end
+
+    # @private
+    def pinned?
+      @pin.pinned?
+    end
+
+    # @private
+    def pin
+      @pin.pin
+    end
+
+    # @private
+    def unpin
+      @pin.unpin
     end
 
     def to_s
